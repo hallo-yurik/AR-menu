@@ -1,0 +1,23 @@
+{
+  "name": "ar-server",
+  "version": "1.0.0",
+  "description": "back-end for AR menu",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hallo-yurik/AR-menu.git"
+  },
+  "keywords": [
+    "express",
+    "AR"
+  ],
+  "author": "Yurii Trach",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hallo-yurik/AR-menu/issues"
+  },
+  "homepage": "https://github.com/hallo-yurik/AR-menu#readme"
+}
