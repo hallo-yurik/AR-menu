@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/hallo-yurik/AR-menu/issues"
   },
-  "homepage": "https://github.com/hallo-yurik/AR-menu#readme"
+  "homepage": "https://github.com/hallo-yurik/AR-menu#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
