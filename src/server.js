@@ -1,11 +1,16 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-require("dotenv/config")
+require("dotenv/config");
+const bodyParser = require("body-parser");
+
+//middlewares
+app.use(bodyParser.json());
 
 //routers import
 const modelViewerRouter = require("./Routers/model-viewer");
 const menuRouter = require("./Routers/menu");
+
 //routers used
 app.use("/viewer", modelViewerRouter);
 app.use("/menu", menuRouter);
