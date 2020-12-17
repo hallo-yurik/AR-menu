@@ -32,7 +32,7 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cl
 })
 
 
-
+//git reset --hard origin/master <<<<<<<<<<<<<<<<<<<
 
 //Listening
 app.listen(8000, () => {
