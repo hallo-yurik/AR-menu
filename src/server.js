@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 require("dotenv/config");
 const bodyParser = require("body-parser");
 
+//env constants
+const PORT = process.env.PORT || 8000
+
 //middlewares
 app.use(bodyParser.json());
 
@@ -35,6 +38,7 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cl
 //git reset --hard origin/master <<<<<<<<<<<<<<<<<<<
 
 //Listening
-app.listen(8000, () => {
+
+app.listen(PORT, () => {
     console.log("server started")
 });

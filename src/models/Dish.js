@@ -1,8 +1,12 @@
 const mongoose = require("mongoose")
 
 
-const DishSchema = mongoose.Schema({
-    title: String
+const DishSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    }
+
 })
 
 module.exports = mongoose.model("Dish", DishSchema)
