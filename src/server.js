@@ -13,10 +13,12 @@ app.use(bodyParser.json());
 //routers import
 const modelViewerRouter = require("./Routers/model-viewer");
 const menuRouter = require("./Routers/menu");
+const adminRouter = require("./Routers/admin-panel/admin-router");
 
 //routers used
 app.use("/viewer", modelViewerRouter);
 app.use("/menu", menuRouter);
+app.use("/admin", adminRouter);
 
 app.get("/", (req, res) => {
     res.send("We are on home");
