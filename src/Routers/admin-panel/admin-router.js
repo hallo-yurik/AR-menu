@@ -4,7 +4,7 @@ const router = express.Router();
 //routers import
 const dessertsRouter = require("./desserts-router");
 const hotDrinksRouter = require("./hot-drinks-router");
-const alcoholRouter = require("./desserts-router");
+const alcoholRouter = require("./alcohol-router");
 
 //use routers
 router.use("/desserts", dessertsRouter);
@@ -18,10 +18,5 @@ router.get("/", async (req, res, next) => {
 router.get("/login", async (req, res, next) => {
     res.send("login");
 });
-
-// router.get("/login", async (req, res, next) => {
-//     res.send("login");
-// });
-
 
 module.exports = router;

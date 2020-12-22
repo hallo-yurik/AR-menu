@@ -12,11 +12,13 @@ app.use(bodyParser.json());
 
 //routers import
 const modelViewerRouter = require("./Routers/model-viewer");
+const imagesRouter = require("./Routers/images");
 const menuRouter = require("./Routers/menu");
 const adminRouter = require("./Routers/admin-panel/admin-router");
 
 //routers used
 app.use("/viewer", modelViewerRouter);
+app.use("/images", imagesRouter);
 app.use("/menu", menuRouter);
 app.use("/admin", adminRouter);
 
