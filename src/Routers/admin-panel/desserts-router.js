@@ -250,28 +250,35 @@ router.patch("/:id", async (req, res, next) => {
                 sameIngredients = false;
             }
 
+
             // console.log(newFormData.fields.price);
 
-            const fs = require('fs')
+            // const fs = require('fs')
+            //
+            // const path = './file.txt'
 
-            const path = './file.txt'
+            // try {
+            //     if (fs.existsSync(path)) {
+            //         //file exists
+            //     }
+            // } catch(err) {
+            //     console.error(err)
+            // }
+            console.log(changeableDessert._id)
 
-            try {
-                if (fs.existsSync(path)) {
-                    //file exists
-                }
-            } catch(err) {
-                console.error(err)
-            }
+            console.log(fs.existsSync(path.join(__dirname, `../../DessertsImages/${changeableDessert._id}.png`)))
 
-
-            let currentImageFile = await fs.stat(path.join(__dirname, `../../DessertsImages/${dessert._id}.png`)) //no such file
+            let currentImageFile = fs.statSync(path.join(__dirname, `../../DessertsImages/${changeableDessert._id}.png`)) //no such file
+            console.log(34)
             let currentImageSize = currentImageFile.size;
             let sameImage = currentImageSize === newFormData.files.dessert_image.size;
 
-            let currentModelFile = await fs.stat(path.join(__dirname, `../../3D-Models/${dessert._id}.usdz`)) //no such file
+            console.log(1)
+            let currentModelFile = await fs.stat(path.join(__dirname, `../../3D-Models/${changeableDessert._id}.usdz`)) //no such file
             let currentModelSize = currentModelFile.size;
             let sameModel = currentModelSize === newFormData.files.dessert_image.size;
+
+            console.log(2)
 
             if (sameName && samePrice && sameIngredients && sameImage && sameModel) {
                 res.json({
