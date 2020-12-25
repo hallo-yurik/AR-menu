@@ -5,6 +5,7 @@ const path = require("path");
 const fs = require('fs');
 const url = require('url');
 const DessertModel = require("../../models/DessertModel");
+const {validate, clearFolder} = require("./utils/dessert-validation");
 
 router.get("/", async (req, res, next) => {
     const desserts = await DessertModel.find();
@@ -12,12 +13,55 @@ router.get("/", async (req, res, next) => {
     // console.log(req.body);
 
     // res.json(desserts)
-  //
+    //
+
+    //   res.send(`
+    //
+    //   <h2>With <code>"express"</code> npm package</h2>
+    //   <form id="myForm" action="/admin/desserts" enctype="multipart/form-data" method="post">
+    //
+    //     <div>Name: <input name="name" type="text"/></div>
+    //     <div>Ingredients: <input name="ingredients" type="text" /></div>
+    //     <div>Ingredients: <input name="ingredients" type="text" /></div>
+    //     <div>Price: <input type="text" name="price" /></div>
+    //
+    //     <div>Image: <input type="file" name="dessert_image"/></div>
+    //     <div>Model: <input type="file" name="dessert_model" /></div>
+    //
+    //     <input type="submit" value="Upload"/>
+    //   </form>
+    //
+    //   <script>
+    //       let myForm = document.getElementById("myForm");
+    //       myForm.onsubmit = async (e) => {
+    //           e.preventDefault()
+    //
+    //           let myFormData = new FormData(myForm);
+    //
+    //           // console.log(myFormData.getAll("ingredients"));
+    //           myFormData.set('ingredients', myFormData.getAll("ingredients"));
+    //
+    //           let response = await fetch('/admin/desserts', {
+    //               method: 'POST',
+    //               body: myFormData
+    //           });
+    //
+    //           // console.log(new FormData(myForm));
+    //           //
+    //           let result = await response.json();
+    //
+    //           console.log(result);
+    //
+    //       }
+    //
+    //
+    //   </script>
+    // `);
 
   //   res.send(`
   //
   //   <h2>With <code>"express"</code> npm package</h2>
-  //   <form id="myForm" action="/admin/desserts" enctype="multipart/form-data" method="post">
+  //   <form id="myForm" action="/admin/desserts" enctype="multipart/form-data">
   //
   //     <div>Name: <input name="name" type="text"/></div>
   //     <div>Ingredients: <input name="ingredients" type="text" /></div>
@@ -40,8 +84,8 @@ router.get("/", async (req, res, next) => {
   //           // console.log(myFormData.getAll("ingredients"));
   //           myFormData.set('ingredients', myFormData.getAll("ingredients"));
   //
-  //           let response = await fetch('/admin/desserts', {
-  //               method: 'POST',
+  //           let response = await fetch('/admin/desserts/5fe49b9ed5a4f93b34fa718a', {
+  //               method: 'PATCH',
   //               body: myFormData
   //           });
   //
@@ -57,52 +101,9 @@ router.get("/", async (req, res, next) => {
   //   </script>
   // `);
 
-    res.send(`
-
-    <h2>With <code>"express"</code> npm package</h2>
-    <form id="myForm" action="/admin/desserts" enctype="multipart/form-data">
-
-      <div>Name: <input name="name" type="text"/></div>
-      <div>Ingredients: <input name="ingredients" type="text" /></div>
-      <div>Ingredients: <input name="ingredients" type="text" /></div>
-      <div>Price: <input type="text" name="price" /></div>
-
-      <div>Image: <input type="file" name="dessert_image"/></div>
-      <div>Model: <input type="file" name="dessert_model" /></div>
-
-      <input type="submit" value="Upload"/>
-    </form>
-
-    <script>
-        let myForm = document.getElementById("myForm");
-        myForm.onsubmit = async (e) => {
-            e.preventDefault()
-
-            let myFormData = new FormData(myForm);
-
-            // console.log(myFormData.getAll("ingredients"));
-            myFormData.set('ingredients', myFormData.getAll("ingredients"));
-
-            let response = await fetch('/admin/desserts/5fe49b9ed5a4f93b34fa718a', {
-                method: 'PATCH',
-                body: myFormData
-            });
-
-            // console.log(new FormData(myForm));
-            //
-            let result = await response.json();
-
-            console.log(result);
-
-        }
-
-
-    </script>
-  `);
-
 
     // console.log(req.protocol + '://' + req.get('host') + req.originalUrl)
-    // res.json({title: "hot drinks", desserts});
+    res.json({title: "desserts", desserts});
 });
 
 router.get("/:id", async (req, res, next) => {
@@ -120,9 +121,6 @@ router.post("/", async (req, res, next) => {
     });
 
     try {
-
-        const errors = []
-
         let newFormData = await new Promise((res, rej) => {
             form.parse(req, (err, fields, files) => {
                 if (err) {
@@ -132,45 +130,7 @@ router.post("/", async (req, res, next) => {
                 res({fields: fields, files: files})
             });
         })
-
-        //validation
-        if (!newFormData.files.dessert_image.size) {
-            errors.push("please attach .png image of dessert")
-        }
-
-        if (path.extname(newFormData.files.dessert_image.path) !== '.png') {
-            errors.push("image should be with .png extension")
-        }
-
-        if (!newFormData.files.dessert_model.size) {
-            errors.push("please attach .usdz model of dessert")
-        }
-
-        if (path.extname(newFormData.files.dessert_model.path) !== '.usdz') {
-            errors.push("model should be with .usdz extension")
-        }
-
-        let ingredients = newFormData.fields.ingredients.split(",");
-        let clearIngredients = ingredients.filter((ingredient) => ingredient !== "");
-
-        if (!clearIngredients.length) {
-            errors.push("please attach ingredients of dessert")
-        }
-
-        if (!newFormData.fields.name) {
-            errors.push("please attach name of dessert")
-        }
-
-        if (!newFormData.fields.price.length) {
-            errors.push("please attach price of dessert")
-        } else if (!isNaN(newFormData.fields.price)) {
-            if (newFormData.fields.price <= 0) {
-                errors.push("price can not be 0 or less")
-            }
-
-        } else {
-            errors.push("price should be a number value")
-        }
+        const {errors, clearIngredients} = validate(newFormData)
 
         if (errors.length) {
             //there are errors
@@ -201,7 +161,7 @@ router.post("/", async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err)
+        await clearFolder(path.join(__dirname, "../../Temp"));
         res.send({
             message: "there is some problem with validation"
         })
@@ -218,7 +178,6 @@ router.patch("/:id", async (req, res, next) => {
     });
 
     try {
-        //FormData should include _id of changeable dessert
         let newFormData = await new Promise((res, rej) => {
             form.parse(req, (err, fields, files) => {
                 if (err) {
@@ -229,14 +188,14 @@ router.patch("/:id", async (req, res, next) => {
             });
         })
 
-        let changeableDessert = await DessertModel.findById(req.params.id);
+        const changeableDessert = await DessertModel.findById(req.params.id);
 
         if (changeableDessert) {
             let ingredients = newFormData.fields.ingredients.split(",");
             let clearIngredients = ingredients.filter((ingredient) => ingredient !== "");
 
             let sameName = newFormData.fields.name === changeableDessert.name;
-            let samePrice = newFormData.fields.price === changeableDessert.price;
+            let samePrice = newFormData.fields.price === changeableDessert.price.toString();
 
             let sameIngredients = true;
 
@@ -250,87 +209,82 @@ router.patch("/:id", async (req, res, next) => {
                 sameIngredients = false;
             }
 
+            let sameImage;
+            let imageExists = fs.existsSync(path.join(__dirname, `../../DessertsImages/${changeableDessert._id}.png`))
 
-            // console.log(newFormData.fields.price);
+            if (imageExists) {
+                let currentImageFile = fs.statSync(path.join(__dirname, `../../DessertsImages/${changeableDessert._id}.png`))
+                let currentImageSize = currentImageFile.size;
+                sameImage = currentImageSize === newFormData.files.dessert_image.size;
+            }
 
-            // const fs = require('fs')
-            //
-            // const path = './file.txt'
+            let sameModel;
+            let modelExists = fs.existsSync(path.join(__dirname, `../../3D-Models/${changeableDessert._id}.usdz`))
 
-            // try {
-            //     if (fs.existsSync(path)) {
-            //         //file exists
-            //     }
-            // } catch(err) {
-            //     console.error(err)
-            // }
-            console.log(changeableDessert._id)
-
-            console.log(fs.existsSync(path.join(__dirname, `../../DessertsImages/${changeableDessert._id}.png`)))
-
-            let currentImageFile = fs.statSync(path.join(__dirname, `../../DessertsImages/${changeableDessert._id}.png`)) //no such file
-            console.log(34)
-            let currentImageSize = currentImageFile.size;
-            let sameImage = currentImageSize === newFormData.files.dessert_image.size;
-
-            console.log(1)
-            let currentModelFile = await fs.stat(path.join(__dirname, `../../3D-Models/${changeableDessert._id}.usdz`)) //no such file
-            let currentModelSize = currentModelFile.size;
-            let sameModel = currentModelSize === newFormData.files.dessert_image.size;
-
-            console.log(2)
+            if (modelExists) {
+                let currentModelFile = fs.statSync(path.join(__dirname, `../../3D-Models/${changeableDessert._id}.usdz`))
+                let currentModelSize = currentModelFile.size;
+                sameModel = currentModelSize === newFormData.files.dessert_model.size;
+            }
 
             if (sameName && samePrice && sameIngredients && sameImage && sameModel) {
+                await clearFolder(path.join(__dirname, "../../Temp"));
                 res.json({
                     message: "nothing has changed"
                 })
-
             } else {
-                res.json({
-                    message: "dessert was changed"
-                })
+
+                const {errors, clearIngredients} = validate(newFormData)
+
+                if (errors.length) {
+                    await fs.unlink(newFormData.files.dessert_image.path, err => console.log(err))
+                    await fs.unlink(newFormData.files.dessert_model.path, err => console.log(err))
+                    res.json({errors});
+                } else {
+
+                    changeableDessert.name = newFormData.fields.name
+                    changeableDessert.ingredients = clearIngredients
+                    changeableDessert.price = newFormData.fields.price
+
+                    await fs.rename(newFormData.files.dessert_model.path, path.join(__dirname, `../../3D-Models/${changeableDessert._id}.usdz`), err => {
+                        if (err) throw err
+                    })
+                    await fs.rename(newFormData.files.dessert_image.path, path.join(__dirname, `../../DessertsImages/${changeableDessert._id}.png`), err => {
+                        if (err) throw err
+                    })
+
+                    const changedDessert = await changeableDessert.save()
+                    res.json(changedDessert)
+
+                }
             }
 
-
         } else {
+
+            await fs.unlink(newFormData.files.dessert_image.path, err => console.log(err))
+            await fs.unlink(newFormData.files.dessert_model.path, err => console.log(err))
+
             res.json({
                 message: "there is no such dessert"
             })
+
         }
-
-
-        // if (newFormData.fields.name === changeableDessert.name && sameIngredients) {
-        //
-        // }
-
 
     } catch (err) {
 
+        console.log(err)
+        await clearFolder(path.join(__dirname, "../../Temp"));
+        res.json({error: 500})
     }
+})
 
-
-    // const filter = {_id: req.params.id};
-    // const {name, ingredients, image, ar, price} = {...req.body};
-    //
-    // //if image of/and ar - change file (delete previous and set new)
-    //
-    // const DessertModelPatch = await DessertModel.findOneAndUpdate(filter,
-    //     {
-    //         name: name,
-    //         ingredients: [...ingredients],
-    //         image: image,
-    //         ar: ar,
-    //         price: price
-    //     },
-    //     {
-    //
-    //         new: true,
-    //         useFindAndModify: true
-    //     });
-
-    res.json("hello");
-
+router.delete("/:id", async (req, res, next) => {
+    try {
+        const deletedPost = await DessertModel.remove({_id: req.params.id})
+        res.json({message: "dessert was deleted", deletedPost})
+    } catch (err) {
+        res.json({message: 500})
+    }
 });
-
 
 module.exports = router;
