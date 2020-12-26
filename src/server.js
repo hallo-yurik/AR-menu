@@ -4,11 +4,13 @@ const mongoose = require("mongoose");
 require("dotenv/config");
 const bodyParser = require("body-parser");
 
+
 //env constants
 const PORT = process.env.PORT || 8000
 
 //middlewares
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false, type: "application/x-www-form-urlencoded"}));
 
 //routers import
 const modelViewerRouter = require("./Routers/model-viewer");
