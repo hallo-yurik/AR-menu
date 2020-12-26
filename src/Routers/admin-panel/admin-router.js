@@ -8,7 +8,7 @@ const alcoholRouter = require("./alcohol-router");
 
 //use routers
 router.use("/desserts", dessertsRouter);
-router.use("/hot_drinks", hotDrinksRouter);
+router.use("/hot-drinks", hotDrinksRouter);
 router.use("/alcohol", alcoholRouter);
 
 router.get("/", async (req, res, next) => {

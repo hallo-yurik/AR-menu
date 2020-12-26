@@ -47,7 +47,7 @@ router.post("/", async (req, res, next) => {
             price: req.body.price
         })
 
-        if (sameAlcohol) {
+        if (sameAlcohol.length) {
             res.json({message: "this alcohol already exists"})
         } else {
             const alcohol = new AlcoholModel({
