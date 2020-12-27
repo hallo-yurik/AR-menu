@@ -4,11 +4,12 @@ const HotDrinksModel = require("./HotDrinksModel")
 const AlcoholModel = require("./AlcoholModel");
 
 const Menu = new Schema({
-    version: String,
+    version: Number,
     creationDate: Date,
-    desserts: [DessertModel],
-    hotDrinks: [HotDrinksModel],
-    alcohol: [AlcoholModel]
+    current: Boolean,
+    desserts: [DessertModel.schema],
+    hotDrinks: [HotDrinksModel.schema],
+    alcohol: [AlcoholModel.schema]
 
 }, {collection: "menu"})
 
