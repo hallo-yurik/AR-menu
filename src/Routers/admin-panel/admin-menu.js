@@ -89,13 +89,17 @@ router.post("/", async (req, res) => {
             } else {
 
                 if (req.body.isCurrent) {
-                    const menuList = await menuModel.find();
+                    const menuList = await menuModel.find({current: true});
                     menuList.forEach((menu) => menu.current = false)
+                    await menuList.save()
+
+
                 } else {
+
 
                 }
 
-                // res.json
+                res.json({message: "menu created"})
             }
 
         }
@@ -106,12 +110,6 @@ router.post("/", async (req, res) => {
         console.log(err)
         res.json({message: 500})
     }
-
-    // let body = req.body
-    //
-    // // req.body.desserts
-    //
-    // res.json({menu: "directed by Robert B. Weide"})
 })
 
 router.patch("/:id", (req, res) => {

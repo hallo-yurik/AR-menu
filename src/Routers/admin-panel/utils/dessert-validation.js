@@ -5,13 +5,13 @@ const validate = (newFormData) => {
 
     const errors = []
 
-    if (!newFormData.files.dessert_image.size) {
+    if (newFormData.files.dessert_image && !newFormData.files.dessert_image.size) {
         errors.push("please attach .png image of dessert")
     } else if (path.extname(newFormData.files.dessert_image.path) !== '.png') {
         errors.push("image should be with .png extension")
     }
 
-    if (!newFormData.files.dessert_model.size) {
+    if (newFormData.files.dessert_model && !newFormData.files.dessert_model.size) {
         errors.push("please attach .usdz model of dessert")
     } else if (path.extname(newFormData.files.dessert_model.path) !== '.usdz') {
         errors.push("model should be with .usdz extension")

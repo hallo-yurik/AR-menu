@@ -46,7 +46,7 @@ router.post("/", async (req, res, next) => {
                 price: req.body.price
             })
 
-            const errors = validate(req.body)
+            const errors = validate(req.body, "hot drink")
 
             if (errors.length) {
                 res.json({
@@ -71,7 +71,7 @@ router.patch("/:id", async (req, res, next) => {
     const update = req.body;
     // console.log(...req.body)
     try {
-        const errors = validate(req.body)
+        const errors = validate(req.body, "hot drink")
 
         if (errors.length) {
             res.json({

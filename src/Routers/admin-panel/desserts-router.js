@@ -150,7 +150,9 @@ router.post("/", async (req, res, next) => {
             price: newFormData.fields.price
         })
 
-        if (sameDessert) {
+        if (sameDessert.length) {
+            await fs.unlink(newFormData.files.dessert_image.path, err => console.log(err))
+            await fs.unlink(newFormData.files.dessert_model.path, err => console.log(err))
             res.json({message: "this dessert already exists"})
         } else {
             const {errors, clearIngredients} = validate(newFormData)
@@ -304,7 +306,11 @@ router.patch("/:id", async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
     try {
-        const deletedPost = await DessertModel.remove({_id: req.params.id})
+        const deletedPost = await DessertModel.deleteOne({_id: req.params.id})
+
+        await fs.unlink(path.join(__dirname, `../../3D-Models/${req.params.id}.usdz`), err => console.log(err))
+        await fs.unlink(path.join(__dirname, `../../DessertsImages/${req.params.id}.png`), err => console.log(err))
+
         res.json({message: "dessert was deleted", deletedPost})
     } catch (err) {
         res.json({message: 500})
