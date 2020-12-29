@@ -56,11 +56,7 @@ router.post("/", async (req, res, next) => {
                 price: req.body.price
             })
 
-            // console.log(errors);
-
             const errors = validate(req.body, "alcohol")
-
-            console.log(errors);
 
             if (errors.length) {
                 res.json({
@@ -95,8 +91,6 @@ router.patch("/:id", async (req, res, next) => {
         } else {
 
             const AlcoholDocument = await AlcoholModel.findById(req.params.id);
-
-            // console.log(AlcoholDocument, req.body);
 
             let sameName = AlcoholDocument.name === req.body.name
             let sameVolume = AlcoholDocument.volume === +req.body.volume

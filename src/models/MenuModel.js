@@ -5,8 +5,8 @@ const AlcoholModel = require("./AlcoholModel");
 
 const Menu = new Schema({
     version: Number,
-    creationDate: Date,
-    current: Boolean,
+    creationDate: {type: Date, default: Date.now()},
+    current: {type: Boolean, default: false},
     desserts: [DessertModel.schema],
     hotDrinks: [HotDrinksModel.schema],
     alcohol: [AlcoholModel.schema]

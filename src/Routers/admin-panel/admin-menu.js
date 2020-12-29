@@ -60,51 +60,113 @@ router.post("/", async (req, res) => {
         }
 
         if (errors.length) {
-          res.json({
-              message: errors
-          })
+            res.json({
+                message: errors
+            })
         } else {
             const menuItemsNotFound = []
 
-            let dessertsDocuments = req.body.desserts.map(async (id) => {
+            let dessertsDocuments = []
+
+            for (let id of req.body.desserts) {
                 const dessert = await DessertModel.findById(id);
-                if (!dessert) menuItemsNotFound.push(`Dessert with id ${id} can't be found`)
-                return dessert
-            })
+                if (!dessert) {
+                    menuItemsNotFound.push(`Dessert with id ${id} can't be found`)
+                } else {
+                    dessertsDocuments.push(dessert)
+                }
+            }
 
-            let hotDrinksDocuments = req.body.hotDrinks.map(async (id) => {
+            let hotDrinksDocuments = []
+
+            for (let id of req.body.hotDrinks) {
                 const hotDrink = await HotDrinksModel.findById(id);
-                if (!hotDrink) menuItemsNotFound.push(`Hot drink with id ${id} can't be found`)
-                return hotDrink
-            })
+                if (!hotDrink) {
+                    menuItemsNotFound.push(`Hot drink with id ${id} can't be found`)
+                } else {
+                    hotDrinksDocuments.push(hotDrink)
+                }
+            }
 
-            let AlcoholDocuments = req.body.alcohol.map(async (id) => {
+            let AlcoholDocuments = [];
+
+            for (let id of req.body.alcohol) {
                 const alcohol = await AlcoholModel.findById(id);
-                if (!alcohol) menuItemsNotFound.push(`Alcohol with id ${id} can't be found`)
-                return alcohol
-            })
+                if (!alcohol) {
+                    menuItemsNotFound.push(`Alcohol with id ${id} can't be found`)
+                } else {
+                    AlcoholDocuments.push(alcohol)
+                }
+            }
 
-            if (!menuItemsNotFound.length) {
+            if (menuItemsNotFound.length) {
                 res.json({message: menuItemsNotFound})
             } else {
 
-                if (req.body.isCurrent) {
-                    const menuList = await menuModel.find({current: true});
-                    menuList.forEach((menu) => menu.current = false)
-                    await menuList.save()
+                const menusAmount = await menuModel.countDocuments({}) //should be a number
+                let latestVersion = 0
 
+                if (menusAmount) {
+
+                    latestVersion = await menuModel.findOne({}).sort({version: -1})
+                    const nextVersion = latestVersion.version + 1;
+
+                    if (req.body.isCurrent === true) {
+                        const menuList = await menuModel.find({current: true});
+
+                        for (let menu of menuList) {
+                            menu.current = false
+                            await menuList.save()
+                        }
+
+                        const newMenu = new menuModel({
+                            version: nextVersion,
+                            current: true,
+                            desserts: dessertsDocuments,
+                            hotDrinks: hotDrinksDocuments,
+                            alcohol: AlcoholDocuments
+                        })
+
+                        const newMenuDocument = await newMenu.save()
+
+                        res.json({menus: newMenuDocument})
+
+                    } else {
+
+                        console.log(dessertsDocuments)
+
+                        const newMenu = new menuModel({
+                            version: nextVersion,
+                            current: false,
+                            desserts: dessertsDocuments,
+                            hotDrinks: hotDrinksDocuments,
+                            alcohol: AlcoholDocuments
+                        })
+
+                        const newMenuDocument = await newMenu.save()
+
+                        res.json({menus: newMenuDocument})
+
+                    }
 
                 } else {
 
+                    const newMenu = new menuModel({
+                        version: 1,
+                        current: true,
+                        desserts: dessertsDocuments,
+                        hotDrinks: hotDrinksDocuments,
+                        alcohol: AlcoholDocuments
+                    })
+
+                    const newMenuDocument = await newMenu.save()
+
+                    res.json({menus: newMenuDocument})
 
                 }
-
-                res.json({message: "menu created"})
             }
 
         }
-
-
 
     } catch (err) {
         console.log(err)
@@ -116,8 +178,30 @@ router.patch("/:id", (req, res) => {
     res.json({menu: "directed by Robert B. Weide"})
 })
 
-router.delete("/:id", (req, res) => {
-    res.json({menu: "directed by Robert B. Weide"})
+router.delete("/:id", async (req, res) => {
+
+    try {
+        const menuToDelete = await menuModel.findById(req.params.id)
+        if (menuToDelete) {
+            await menuToDelete.deleteOne();
+            res.json({message: `${menuToDelete.name} was deleted`, menuToDelete})
+
+            if (menuToDelete) {
+
+            }
+
+
+        } else {
+            res.json({message: "there is no such menu"});
+        }
+    } catch (err) {
+        console.log(err)
+        res.json({message: 500})
+    }
+
+
+
+    // res.json({menu: "directed by Robert B. Weide"})
 })
 
 module.exports = router;
