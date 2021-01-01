@@ -120,9 +120,9 @@ router.get("/:id", async (req, res, next) => {
         res.json({message: 500})
     }
 
-    const dessert = await DessertModel.findById(req.params.id);
-
-    res.json(dessert);
+    // const dessert = await DessertModel.findById(req.params.id);
+    //
+    // res.json(dessert);
 });
 
 router.post("/", async (req, res, next) => {

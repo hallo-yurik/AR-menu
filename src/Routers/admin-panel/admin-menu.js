@@ -104,19 +104,18 @@ router.post("/", async (req, res) => {
             } else {
 
                 const menusAmount = await menuModel.countDocuments({}) //should be a number
-                let latestVersion = 0
 
                 if (menusAmount) {
 
-                    latestVersion = await menuModel.findOne({}).sort({version: -1})
-                    const nextVersion = latestVersion.version + 1;
+                    const latestVersionMenu = await menuModel.findOne({}).sort({version: -1})
+                    const nextVersion = latestVersionMenu.version + 1;
 
                     if (req.body.isCurrent === true) {
                         const menuList = await menuModel.find({current: true});
 
                         for (let menu of menuList) {
                             menu.current = false
-                            await menuList.save()
+                            await menu.save()
                         }
 
                         const newMenu = new menuModel({
@@ -132,8 +131,6 @@ router.post("/", async (req, res) => {
                         res.json({menus: newMenuDocument})
 
                     } else {
-
-                        console.log(dessertsDocuments)
 
                         const newMenu = new menuModel({
                             version: nextVersion,
@@ -182,14 +179,19 @@ router.delete("/:id", async (req, res) => {
 
     try {
         const menuToDelete = await menuModel.findById(req.params.id)
+
         if (menuToDelete) {
-            await menuToDelete.deleteOne();
-            res.json({message: `${menuToDelete.name} was deleted`, menuToDelete})
+            await menuToDelete.deleteOne();//!!!!
+            const menusAmount = await menuModel.countDocuments({})
 
-            if (menuToDelete) {
+            console.log(menuToDelete)
+            if (menuToDelete.current && menusAmount) {
 
+                const latestVersion = await menuModel.findOne({}).sort({version: -1})
+                latestVersion.current = true;
+                await latestVersion.save();
             }
-
+            res.json({message: `menu version ${menuToDelete.version} was deleted`, menuToDelete})
 
         } else {
             res.json({message: "there is no such menu"});
@@ -198,10 +200,6 @@ router.delete("/:id", async (req, res) => {
         console.log(err)
         res.json({message: 500})
     }
-
-
-
-    // res.json({menu: "directed by Robert B. Weide"})
 })
 
 module.exports = router;
