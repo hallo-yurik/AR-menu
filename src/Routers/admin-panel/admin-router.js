@@ -17,8 +17,9 @@ router.get("/", async (req, res, next) => {
     res.send("admin panel");
 });
 
-router.get("/login", async (req, res, next) => {
-    res.send("login");
+router.delete("/logout", async (req, res, next) => {
+    req.logOut();
+    res.redirect("/login")
 });
 
 module.exports = router;
