@@ -5,7 +5,7 @@ const path = require("path");
 const fs = require('fs');
 const url = require('url');
 const DessertModel = require("../../models/DessertModel");
-const {validate, clearFolder} = require("../utils/dessert-validation");
+const {validate, clearFolder} = require("../../utils/dessert-validation");
 
 router.get("/", async (req, res, next) => {
     const desserts = await DessertModel.find();
