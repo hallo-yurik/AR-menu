@@ -3,19 +3,11 @@ const app = express();
 const mongoose = require("mongoose");
 require("dotenv/config");
 const bodyParser = require("body-parser");
-const passport = require("./Passport/passport-main")
-
-
-// const passport = require("passport")
-//
-// const initializePassport = require("./Routers/utils/initialize-passport");
-// initializePassport(passport);
-//
-// const checkAuthenticated = require("./Routers/utils/check-authenticated")
-// const checkNotAuthenticated = require("./Routers/utils/check-not-authenticated")
-//
-// const flash = require("express-flash");
-// const session = require("express-session");
+const passport = require("./Passport/passport-main");
+// const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
+const shouldBeLoggedMiddleware = require("./utils/middlewares/passport-should-be-logged")
+const shouldNotBeLoggedMiddleware = require("./utils/middlewares/passport-should-be-logged")
 
 //env constants
 const PORT = process.env.PORT || 8000
@@ -23,14 +15,14 @@ const PORT = process.env.PORT || 8000
 //middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false, type: "application/x-www-form-urlencoded"}));
-// app.use(flash())
-// app.use(session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false
-// }))
+app.use(cookieSession({
+    name: 'session',
+    keys: ['key1', 'key2']
+}))
 app.use(passport.initialize());
-// app.use(passport.session())
+app.use(passport.session())
+// app.use(cookieParser())
+
 
 //routers import
 const modelViewerRouter = require("./Routers/model-viewer");
@@ -43,8 +35,8 @@ const loginRouter = require("./Routers/login");
 app.use("/viewer", modelViewerRouter);
 app.use("/images", imagesRouter);
 app.use("/menu", menuRouter);
-app.use("/admin", adminRouter);
-app.use("/login", loginRouter);
+app.use("/admin", shouldBeLoggedMiddleware, adminRouter);
+app.use("/login", shouldNotBeLoggedMiddleware, loginRouter);
 
 app.get("/", (req, res) => {
     res.send("We are on home");

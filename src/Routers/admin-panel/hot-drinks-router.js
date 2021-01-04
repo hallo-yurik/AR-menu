@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const HotDrinksModel = require("../../models/HotDrinksModel");
-const validate = require("../../utils/alcohol-validation");
+const validate = require("../../utils/validators/alcohol-validation");
 
 // router.get("/", async (req, res, next) => {
 //     const hotDrinks = await HotDrinksModel.find()

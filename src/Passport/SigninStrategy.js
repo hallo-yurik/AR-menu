@@ -17,8 +17,16 @@ const SignInStrategy = new LocalStrategy({}, async (username, password, done) =>
             return done("Username or password is wrong");
         }
 
+        if (!user.verified) {
+            return done("Username isn`t verified, please contact admin");
+        }
+
+        //logging in is successful
         const objUser = user.toObject()
         delete objUser.password;
+        objUser.isAuthenticated = true;
+
+        console.log(objUser)
         return done(null, objUser)
 
     } catch (err) {

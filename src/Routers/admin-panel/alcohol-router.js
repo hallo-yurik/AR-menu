@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const AlcoholModel = require("../../models/AlcoholModel");
-const validate = require("../../utils/alcohol-validation");
+const validate = require("../../utils/validators/alcohol-validation");
 
 router.get("/", async (req, res, next) => {
 

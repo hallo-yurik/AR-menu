@@ -1,11 +1,31 @@
 const passport = require("passport");
+const User = require("../models/UserModel")
 
 //our strategies
 const SignInStrategy = require("./SigninStrategy");
-const SignUpStrategy = require("./SignupStrategy")
 
 //passport middlewares
 passport.use("local-sign-in", SignInStrategy);
-passport.use("local-sign-up", SignUpStrategy);
+
+passport.serializeUser((user, done) => {
+
+    done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+
+    try{
+        const user = await User.findById(id);
+        const userObj = user.toObject();
+        delete userObj.password;
+        userObj.isAuthenticated = true;
+
+        done(null, userObj);
+
+    } catch (err) {
+        done(err);
+    }
+
+});
 
 module.exports = passport;
