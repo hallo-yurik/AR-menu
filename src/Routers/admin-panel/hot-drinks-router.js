@@ -29,32 +29,44 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
     try {
-        const sameHotDrink = await HotDrinksModel.find({
-            name: req.body.name,
-            volume: req.body.volume,
-            price: req.body.price
-        })
 
-        if (sameHotDrink.length) {
-            res.json({message: "this hot drink already exists"})
-        } else {
-            const hotDrink = new HotDrinksModel({
+
+        const errors = validate(req.body, "hot drink")
+
+        if (!errors.length) {
+            const sameHotDrink = await HotDrinksModel.find({
                 name: req.body.name,
                 volume: req.body.volume,
                 price: req.body.price
             })
 
-            const errors = validate(req.body, "hot drink")
-
-            if (errors.length) {
-                res.json({
-                    message: errors
-                })
+            if (sameHotDrink.length) {
+                res.json({message: "this hot drink already exists"})
             } else {
-                const hotDrinkPost = await hotDrink.save()
-                res.json(hotDrinkPost)
+                const hotDrink = new HotDrinksModel({
+                    name: req.body.name,
+                    volume: req.body.volume,
+                    price: req.body.price
+                })
+
+                console.log(111)
+
+                const errors = validate(req.body, "hot drink")
+
+                if (errors.length) {
+                    res.json({
+                        message: errors
+                    })
+                } else {
+                    const hotDrinkPost = await hotDrink.save()
+                    res.json(hotDrinkPost)
+                }
             }
+        } else {
+            res.status(400).json({message: errors})
         }
+
+
     } catch (err) {
         res.json({
             message: 500

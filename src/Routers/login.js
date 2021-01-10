@@ -41,14 +41,15 @@ router.post("/signin", (req, res, next) => {
             })
         }
 
+
+
         //Persistent login
         req.logIn(user, (err) => {
             if (err) {
-                return res.status(400).json({
-                    message: err
+                return res.status(410).json({
+                    message: "Internal server error"
                 })
             }
-
             return res.json({message: user})
         })
 

@@ -110,7 +110,7 @@ router.post("/", async (req, res) => {
                     const latestVersionMenu = await menuModel.findOne({}).sort({version: -1})
                     const nextVersion = latestVersionMenu.version + 1;
 
-                    if (req.body.isCurrent === true) {
+                    if (req.body.current === true) {
                         const menuList = await menuModel.find({current: true});
 
                         for (let menu of menuList) {

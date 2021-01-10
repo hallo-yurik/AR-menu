@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
-// const Dessert = require("../models/DessertModel");
+const Menu = require("../models/MenuModel")
 
 router.get("/", async (req, res, next) => {
-    res.send("menu");
+    try{
+        const currentMenu = await Menu.findOne({current: true})
+        res.json(currentMenu)
+    } catch (err) {
+        res.json({message: "Internal server error"})
+    }
 });
 
 module.exports = router;

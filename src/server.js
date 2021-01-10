@@ -7,7 +7,17 @@ const passport = require("./Passport/passport-main");
 // const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const shouldBeLoggedMiddleware = require("./utils/middlewares/passport-should-be-logged")
-const shouldNotBeLoggedMiddleware = require("./utils/middlewares/passport-should-be-logged")
+const shouldNotBeLoggedMiddleware = require("./utils/middlewares/passport-should-not-be-logged")
+const cors = require('cors')
+
+// app.use(cors({
+//     "origin": "*",
+//     "methods": "GET,PATCH,POST,DELETE",
+//     "preflightContinue": false,
+//     "optionsSuccessStatus": 204
+// }))
+
+
 
 //env constants
 const PORT = process.env.PORT || 8000
@@ -22,6 +32,14 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session())
 // app.use(cookieParser())
+app.use(cors({
+    "origin": true,
+    "methods": "GET,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204,
+    "credentials": true
+}))
+// app.use(cors())
 
 
 //routers import
@@ -35,7 +53,8 @@ const loginRouter = require("./Routers/login");
 app.use("/viewer", modelViewerRouter);
 app.use("/images", imagesRouter);
 app.use("/menu", menuRouter);
-app.use("/admin", shouldBeLoggedMiddleware, adminRouter);
+// app.use("/admin", shouldBeLoggedMiddleware, adminRouter);
+app.use("/admin", adminRouter);
 app.use("/login", shouldNotBeLoggedMiddleware, loginRouter);
 
 app.get("/", (req, res) => {

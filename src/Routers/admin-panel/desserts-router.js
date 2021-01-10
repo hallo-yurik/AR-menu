@@ -10,8 +10,6 @@ const {validate, clearFolder} = require("../../utils/validators/dessert-validati
 router.get("/", async (req, res, next) => {
     const desserts = await DessertModel.find();
 
-    // console.log(req.body);
-
     // res.json(desserts)
     //
 

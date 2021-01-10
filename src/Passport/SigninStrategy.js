@@ -26,7 +26,6 @@ const SignInStrategy = new LocalStrategy({}, async (username, password, done) =>
         delete objUser.password;
         objUser.isAuthenticated = true;
 
-        console.log(objUser)
         return done(null, objUser)
 
     } catch (err) {
