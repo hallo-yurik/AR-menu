@@ -7,10 +7,11 @@ const AlcoholModel = require("./../../models/AlcoholModel");
 
 router.get("/", async (req, res) => {
     try {
-        const menu = await menuModel.find();
-        res.json({title: "menu", menu});
+        const menus = await menuModel.find();
+        res.status(200).json({title: "menus", menus});
     } catch (err) {
-        res.json({message: 500})
+        console.log(err)
+        res.status(500).json({message: ["internal server error"]})
     }
 
 })
@@ -19,13 +20,13 @@ router.get("/:id", async (req, res) => {
     try {
         const menu = await menuModel.findById(req.params.id);
         if (menu) {
-            res.json(menu)
+            res.status(200).json(menu)
         } else {
-            res.json({message: "there is no such menu"})
+            res.status(400).json({message: ["there is no such menu"]})
         }
     } catch (err) {
         console.log(err)
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 })
 
@@ -60,9 +61,7 @@ router.post("/", async (req, res) => {
         }
 
         if (errors.length) {
-            res.json({
-                message: errors
-            })
+            res.status(400).json({message: errors}) //arrays validation
         } else {
             const menuItemsNotFound = []
 
@@ -100,7 +99,7 @@ router.post("/", async (req, res) => {
             }
 
             if (menuItemsNotFound.length) {
-                res.json({message: menuItemsNotFound})
+                res.status(400).json({message: menuItemsNotFound})
             } else {
 
                 const menusAmount = await menuModel.countDocuments({}) //should be a number
@@ -128,7 +127,7 @@ router.post("/", async (req, res) => {
 
                         const newMenuDocument = await newMenu.save()
 
-                        res.json({menus: newMenuDocument})
+                        res.status(200).json(newMenuDocument)
 
                     } else {
 
@@ -142,7 +141,7 @@ router.post("/", async (req, res) => {
 
                         const newMenuDocument = await newMenu.save()
 
-                        res.json({menus: newMenuDocument})
+                        res.status(200).json(newMenuDocument)
 
                     }
 
@@ -158,7 +157,7 @@ router.post("/", async (req, res) => {
 
                     const newMenuDocument = await newMenu.save()
 
-                    res.json({menus: newMenuDocument})
+                    res.status(200).json(newMenuDocument)
 
                 }
             }
@@ -167,12 +166,12 @@ router.post("/", async (req, res) => {
 
     } catch (err) {
         console.log(err)
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 })
 
 router.patch("/:id", (req, res) => {
-    res.json({menu: "directed by Robert B. Weide"})
+    res.status(500).json({message: ["directed by Robert B. Weide"]})
 })
 
 router.delete("/:id", async (req, res) => {
@@ -184,21 +183,21 @@ router.delete("/:id", async (req, res) => {
             await menuToDelete.deleteOne();//!!!!
             const menusAmount = await menuModel.countDocuments({})
 
-            console.log(menuToDelete)
+            // console.log(menuToDelete)
             if (menuToDelete.current && menusAmount) {
 
                 const latestVersion = await menuModel.findOne({}).sort({version: -1})
                 latestVersion.current = true;
                 await latestVersion.save();
             }
-            res.json({message: `menu version ${menuToDelete.version} was deleted`, menuToDelete})
+            res.status(200).json({message: `menu version ${menuToDelete.version} was deleted`, menuToDelete})
 
         } else {
-            res.json({message: "there is no such menu"});
+            res.status(400).json({message: ["there is no such menu"]});
         }
     } catch (err) {
         console.log(err)
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 })
 

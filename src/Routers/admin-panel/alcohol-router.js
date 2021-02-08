@@ -20,22 +20,27 @@ router.get("/", async (req, res, next) => {
     //
     // `);
 
+    try {
+        const alcohol = await AlcoholModel.find();
+        res.status(200).json({title: "alcohol", alcohol});
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: ["internal server error"]})
+    }
 
-    const alcohol = await AlcoholModel.find();
-    res.json({title: "alcohol", alcohol});
 });
 
 router.get("/:id", async (req, res, next) => {
     try {
         const alcohol = await AlcoholModel.findById(req.params.id);
         if (alcohol) {
-            res.json(alcohol)
+            res.status(200).json(alcohol)
         } else {
-            res.json({message: "there is no such alcohol"})
+            res.status(400).json({message: ["there is no such alcohol"]})
         }
     } catch (err) {
         console.log(err)
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 });
 
@@ -48,7 +53,7 @@ router.post("/", async (req, res, next) => {
         })
 
         if (sameAlcohol.length) {
-            res.json({message: "this alcohol already exists"})
+            res.status(400).json({message: ["this alcohol already exists"]})
         } else {
             const alcohol = new AlcoholModel({
                 name: req.body.name,
@@ -59,19 +64,15 @@ router.post("/", async (req, res, next) => {
             const errors = validate(req.body, "alcohol")
 
             if (errors.length) {
-                res.json({
-                    message: errors
-                })
+                res.status(400).json({message: errors})
             } else {
                 const alcoholPost = await alcohol.save()
-                res.json(alcoholPost)
+                res.status(200).json(alcoholPost)
             }
         }
     } catch (err) {
         console.log(err)
-        res.json({
-            message: 500
-        })
+        res.status(500).json({message: ["internal server error"]})
     }
 
 });
@@ -85,9 +86,7 @@ router.patch("/:id", async (req, res, next) => {
         const errors = validate(req.body, "alcohol")
 
         if (errors.length) {
-            res.json({
-                message: errors
-            })
+            res.status(400).json({message: errors})
         } else {
 
             const AlcoholDocument = await AlcoholModel.findById(req.params.id);
@@ -97,35 +96,34 @@ router.patch("/:id", async (req, res, next) => {
             let samePrice = AlcoholDocument.price === +req.body.price
 
             if (sameName && sameVolume && samePrice) {
-                res.json({message: "nothing has changed"});
+                res.status(400).json({message: ["nothing has changed"]});
             } else {
                 const AlcoholModelPatch = await AlcoholModel.findOneAndUpdate(filter, update, {
                     new: true,
                     useFindAndModify: false
                 });
                 // AlcoholDocument.updateOne(update);
-                res.json(AlcoholModelPatch);
+                res.status(200).json(AlcoholModelPatch);
             }
         }
 
     } catch (err) {
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 
 });
 
 router.delete("/:id", async (req, res, next) => {
     try {
-        const postToDelete = await AlcoholModel.findById(req.params.id)
-        if (postToDelete) {
-            const deletedPost = await postToDelete.deleteOne();
-            res.json({message: "alcohol was deleted", postToDelete})
+        const alcoholToDelete = await AlcoholModel.findById(req.params.id)
+        if (alcoholToDelete) {
+            res.status(200).json({message: "alcohol was deleted", alcoholToDelete})
         } else {
-            res.json({message: "there is no such alcohol"});
+            res.status(400).json({message: ["there is no such alcohol"]});
         }
     } catch (err) {
         console.log(err)
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 });
 

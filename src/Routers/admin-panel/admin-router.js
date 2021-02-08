@@ -19,7 +19,7 @@ router.get("/", async (req, res, next) => {
 
 router.delete("/logout", async (req, res, next) => {
     req.logOut();
-    res.json("You are logged out")
+    res.status(200).json({message: "You are logged out"})
 });
 
 module.exports = router;

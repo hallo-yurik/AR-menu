@@ -8,6 +8,10 @@ const DessertModel = require("../../models/DessertModel");
 const {validate, clearFolder} = require("../../utils/validators/dessert-validation");
 
 router.get("/", async (req, res, next) => {
+
+    try {
+
+
     const desserts = await DessertModel.find();
 
     // console.log("send")
@@ -104,6 +108,9 @@ router.get("/", async (req, res, next) => {
 
     // console.log(req.protocol + '://' + req.get('host') + req.originalUrl)
     res.json({title: "desserts", desserts});
+    } catch (err) {
+        res.status(500).json({message: ["internal server error"]})
+    }
 });
 
 router.get("/:id", async (req, res, next) => {
@@ -111,13 +118,13 @@ router.get("/:id", async (req, res, next) => {
     try {
         const dessert = await DessertModel.findById(req.params.id);
         if (dessert) {
-            res.json(dessert)
+            res.status(200).json(dessert)
         } else {
-            res.json({message: "there is no such dessert"})
+            res.status(400).json({message: ["there is no such dessert"]})
         }
     } catch (err) {
         console.log(err)
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 
     // const dessert = await DessertModel.findById(req.params.id);
@@ -153,7 +160,7 @@ router.post("/", async (req, res, next) => {
         if (sameDessert.length) {
             await fs.unlink(newFormData.files.dessert_image.path, err => console.log(err))
             await fs.unlink(newFormData.files.dessert_model.path, err => console.log(err))
-            res.json({message: "this dessert already exists"})
+            res.status(400).json({message: ["this dessert already exists"]})
         } else {
             const {errors, clearIngredients} = validate(newFormData)
 
@@ -162,7 +169,7 @@ router.post("/", async (req, res, next) => {
                 await fs.unlink(newFormData.files.dessert_image.path, err => console.log(err))
                 await fs.unlink(newFormData.files.dessert_model.path, err => console.log(err))
 
-                res.json(errors)
+                res.status(400).json(errors)
             } else {
                 //everything is correct!
                 const dessert = new DessertModel({})
@@ -188,9 +195,7 @@ router.post("/", async (req, res, next) => {
 
     } catch (err) {
         await clearFolder(path.join(__dirname, "../../Temp"));
-        res.send({
-            message: "there is some problem with validation"
-        })
+        res.status(500).json({message: ["there is some problem with validation"]})
     }
 
 });
@@ -255,9 +260,7 @@ router.patch("/:id", async (req, res, next) => {
 
             if (sameName && samePrice && sameIngredients && sameImage && sameModel) {
                 await clearFolder(path.join(__dirname, "../../Temp"));
-                res.json({
-                    message: "nothing has changed"
-                })
+                res.status(400).json({message: ["nothing has changed"]})
             } else {
 
                 const {errors, clearIngredients} = validate(newFormData)
@@ -265,7 +268,7 @@ router.patch("/:id", async (req, res, next) => {
                 if (errors.length) {
                     await fs.unlink(newFormData.files.dessert_image.path, err => console.log(err))
                     await fs.unlink(newFormData.files.dessert_model.path, err => console.log(err))
-                    res.json({errors});
+                    res.status(400).json({message: errors});
                 } else {
 
                     changeableDessert.name = newFormData.fields.name
@@ -280,7 +283,7 @@ router.patch("/:id", async (req, res, next) => {
                     })
 
                     const changedDessert = await changeableDessert.save()
-                    res.json(changedDessert)
+                    res.status(200).json(changedDessert)
 
                 }
             }
@@ -290,9 +293,7 @@ router.patch("/:id", async (req, res, next) => {
             await fs.unlink(newFormData.files.dessert_image.path, err => console.log(err))
             await fs.unlink(newFormData.files.dessert_model.path, err => console.log(err))
 
-            res.json({
-                message: "there is no such dessert"
-            })
+            res.status(400).json({message: ["there is no such dessert"]})
 
         }
 
@@ -300,20 +301,20 @@ router.patch("/:id", async (req, res, next) => {
 
         console.log(err)
         await clearFolder(path.join(__dirname, "../../Temp"));
-        res.json({error: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 })
 
 router.delete("/:id", async (req, res, next) => {
     try {
-        const deletedPost = await DessertModel.deleteOne({_id: req.params.id})
+        const deletedDessert = await DessertModel.deleteOne({_id: req.params.id})
 
         await fs.unlink(path.join(__dirname, `../../3D-Models/${req.params.id}.usdz`), err => console.log(err))
         await fs.unlink(path.join(__dirname, `../../DessertsImages/${req.params.id}.png`), err => console.log(err))
 
-        res.json({message: "dessert was deleted", deletedPost})
+        res.status(200).json({message: "dessert was deleted", deletedDessert})
     } catch (err) {
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 });
 

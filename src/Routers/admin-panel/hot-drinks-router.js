@@ -9,27 +9,32 @@ const validate = require("../../utils/validators/alcohol-validation");
 // });
 
 router.get("/", async (req, res, next) => {
-    const hotDrinks = await HotDrinksModel.find();
-    res.json({title: "hot drinks", hotDrinks});
+    try {
+        const hotDrinks = await HotDrinksModel.find();
+        res.status(200).json({title: "hot drinks", hotDrinks});
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: ["internal server error"]})
+    }
+
 });
 
 router.get("/:id", async (req, res, next) => {
     try {
         const hotDrink = await HotDrinksModel.findById(req.params.id);
         if (hotDrink) {
-            res.json(hotDrink)
+            res.status(200).json(hotDrink)
         } else {
-            res.json({message: "there is no such hot drink"})
+            res.status(400).json({message: "there is no such hot drink"})
         }
     } catch (err) {
         console.log(err)
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 });
 
 router.post("/", async (req, res, next) => {
     try {
-
 
         const errors = validate(req.body, "hot drink")
 
@@ -41,7 +46,7 @@ router.post("/", async (req, res, next) => {
             })
 
             if (sameHotDrink.length) {
-                res.json({message: "this hot drink already exists"})
+                res.status(400).json({message: ["this hot drink already exists"]})
             } else {
                 const hotDrink = new HotDrinksModel({
                     name: req.body.name,
@@ -49,17 +54,13 @@ router.post("/", async (req, res, next) => {
                     price: req.body.price
                 })
 
-                console.log(111)
-
                 const errors = validate(req.body, "hot drink")
 
                 if (errors.length) {
-                    res.json({
-                        message: errors
-                    })
+                    res.status(400).json({message: errors})
                 } else {
                     const hotDrinkPost = await hotDrink.save()
-                    res.json(hotDrinkPost)
+                    res.status(200).json(hotDrinkPost)
                 }
             }
         } else {
@@ -68,9 +69,7 @@ router.post("/", async (req, res, next) => {
 
 
     } catch (err) {
-        res.json({
-            message: 500
-        })
+        res.status(500).json({message: ["internal server error"]})
     }
 
 });
@@ -79,14 +78,12 @@ router.patch("/:id", async (req, res, next) => {
 
     const filter = {_id: req.params.id};
     const update = req.body;
-    // console.log(...req.body)
+
     try {
         const errors = validate(req.body, "hot drink")
 
         if (errors.length) {
-            res.json({
-                message: errors
-            })
+            res.status(400).json({message: errors})
         } else {
 
             const HotDrinkDocument = await HotDrinksModel.findById(req.params.id);
@@ -96,35 +93,35 @@ router.patch("/:id", async (req, res, next) => {
             let samePrice = HotDrinkDocument.price === +req.body.price
 
             if (sameName && sameVolume && samePrice) {
-                res.json({message: "nothing has changed"});
+                res.status(400).json({message: ["nothing has changed"]});
             } else {
                 const HotDrinkModelPatch = await HotDrinksModel.findOneAndUpdate(filter, update, {
                     new: true,
                     useFindAndModify: false
                 });
 
-                res.json(HotDrinkModelPatch);
+                res.status(200).json(HotDrinkModelPatch);
             }
         }
 
     } catch (err) {
-        res.json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 
 });
 
 router.delete("/:id", async (req, res, next) => {
     try {
-        const postToDelete = await HotDrinksModel.findById(req.params.id)
-        if (postToDelete) {
-            await postToDelete.deleteOne();
-            res.json({message: `${postToDelete.name} was deleted`, postToDelete})
+        const hotDrinkToDelete = await HotDrinksModel.findById(req.params.id)
+        if (hotDrinkToDelete) {
+            await hotDrinkToDelete.deleteOne();
+            res.status(200).json({message: `${hotDrinkToDelete.name} was deleted`, hotDrinkToDelete})
         } else {
-            res.json({message: "there is no such hot drink"});
+            res.status(400).json({message: "there is no such hot drink"});
         }
     } catch (err) {
         console.log(err)
-        res.json({message: 500})
+        res.status(500).json({message: 500})
     }
 });
 
