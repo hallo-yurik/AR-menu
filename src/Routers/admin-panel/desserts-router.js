@@ -177,8 +177,11 @@ router.post("/", async (req, res, next) => {
                 dessert.name = newFormData.fields.name
                 dessert.ingredients = clearIngredients
                 dessert.price = newFormData.fields.price
-                dessert.ar = `${req.protocol}://${req.get('host')}/viewer/${dessert._id}.usdz`
-                dessert.image = `${req.protocol}://${req.get('host')}/images/${dessert._id}.png`
+                dessert.ar = `${req.protocol}://localhost:8000/viewer/${dessert._id}.usdz`
+                dessert.image = `${req.protocol}://localhost:8000/images/${dessert._id}.png`
+
+                // dessert.ar = `${req.protocol}://${req.get('host')}/viewer/${dessert._id}.usdz`
+                // dessert.image = `${req.protocol}://${req.get('host')}/images/${dessert._id}.png`
 
                 await fs.rename(newFormData.files.dessert_model.path, path.join(__dirname, `../../3D-Models/${dessert._id}.usdz`), (err) => {
                     if (err) console.log('ERROR: ' + err);
@@ -187,9 +190,11 @@ router.post("/", async (req, res, next) => {
                 await fs.rename(newFormData.files.dessert_image.path, path.join(__dirname, `../../DessertsImages/${dessert._id}.png`), (err) => {
                     if (err) console.log('ERROR: ' + err);
                 })
-                //
+
+
                 const dessertPost = await dessert.save()
-                res.json(dessertPost)
+                // console.log(dessertPost)
+                res.status(200).json(dessertPost)
             }
         }
 

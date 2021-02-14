@@ -25,7 +25,6 @@ const validate = (body, productName) => {
 
     if (volume && !volume && isNaN(volume)) {
         errors.push(`please attach volume of ${productName}`)
-        console.log(1)
     } else if (!isNaN(volume)) {
         if (+volume <= 0) {
             errors.push("volume can not be 0 or less")
@@ -33,7 +32,6 @@ const validate = (body, productName) => {
 
     } else if (price == null) {
         errors.push(`please attach volume of ${productName}`)
-        console.log(2)
     } else {
         errors.push("volume should be a number value")
     }
