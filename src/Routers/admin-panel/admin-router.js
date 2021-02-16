@@ -14,7 +14,7 @@ router.use("/alcohol", alcoholRouter);
 router.use("/menu", adminMenuRouter);
 
 router.get("/", async (req, res, next) => {
-    res.send("admin panel");
+    res.status(200).json({message: "You are at the admin panel!"});
 });
 
 router.delete("/logout", async (req, res, next) => {

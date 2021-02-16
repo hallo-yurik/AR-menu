@@ -37,7 +37,8 @@ app.use(cors({
     "methods": "GET,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204,
-    "credentials": true
+    "credentials": true,
+    // "allowedHeaders": ['Content-Type', 'Authorization']
 }))
 // app.use(cors())
 
@@ -49,12 +50,31 @@ const menuRouter = require("./Routers/menu");
 const adminRouter = require("./Routers/admin-panel/admin-router");
 const loginRouter = require("./Routers/login");
 
+// app.use(function (req, res, next) {
+//
+//     // Website you wish to allow to connect
+//     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8000');
+//
+//     // Request methods you wish to allow
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//
+//     // Request headers you wish to allow
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//
+//     // Set to true if you need the website to include cookies in the requests sent
+//     // to the API (e.g. in case you use sessions)
+//     res.setHeader('Access-Control-Allow-Credentials', true);
+//
+//     // Pass to next layer of middleware
+//     next();
+// });
+
 //routers used
 app.use("/viewer", modelViewerRouter);
 app.use("/images", imagesRouter);
 app.use("/menu", menuRouter);
-// app.use("/admin", shouldBeLoggedMiddleware, adminRouter);
-app.use("/admin", adminRouter);
+app.use("/admin", shouldBeLoggedMiddleware, adminRouter);
+// app.use("/admin", adminRouter);
 app.use("/login", shouldNotBeLoggedMiddleware, loginRouter);
 
 app.get("/", (req, res) => {

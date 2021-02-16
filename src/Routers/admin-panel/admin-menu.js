@@ -6,6 +6,7 @@ const HotDrinksModel = require("./../../models/HotDrinksModel")
 const AlcoholModel = require("./../../models/AlcoholModel");
 
 router.get("/", async (req, res) => {
+
     try {
         const menus = await menuModel.find();
         res.status(200).json({title: "menus", menus});

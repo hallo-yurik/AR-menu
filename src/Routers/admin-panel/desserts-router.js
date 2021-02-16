@@ -9,105 +9,107 @@ const {validate, clearFolder} = require("../../utils/validators/dessert-validati
 
 router.get("/", async (req, res, next) => {
 
+    // console.log(req.session)
+
     try {
 
 
-    const desserts = await DessertModel.find();
+        const desserts = await DessertModel.find();
 
-    // console.log("send")
+        // console.log("send")
 
-    // res.json(desserts)
-    //
+        // res.json(desserts)
+        //
 
-    //   res.send(`
-    //
-    //   <h2>With <code>"express"</code> npm package</h2>
-    //   <form id="myForm" action="/admin/desserts" enctype="multipart/form-data" method="post">
-    //
-    //     <div>Name: <input name="name" type="text"/></div>
-    //     <div>Ingredients: <input name="ingredients" type="text" /></div>
-    //     <div>Ingredients: <input name="ingredients" type="text" /></div>
-    //     <div>Price: <input type="text" name="price" /></div>
-    //
-    //     <div>Image: <input type="file" name="dessert_image"/></div>
-    //     <div>Model: <input type="file" name="dessert_model" /></div>
-    //
-    //     <input type="submit" value="Upload"/>
-    //   </form>
-    //
-    //   <script>
-    //       let myForm = document.getElementById("myForm");
-    //       myForm.onsubmit = async (e) => {
-    //           e.preventDefault()
-    //
-    //           let myFormData = new FormData(myForm);
-    //
-    //           // console.log(myFormData.getAll("ingredients"));
-    //           myFormData.set('ingredients', myFormData.getAll("ingredients"));
-    //
-    //           let response = await fetch('/admin/desserts', {
-    //               method: 'POST',
-    //               body: myFormData
-    //           });
-    //
-    //           // console.log(new FormData(myForm));
-    //           //
-    //           let result = await response.json();
-    //
-    //           console.log(result);
-    //
-    //       }
-    //
-    //
-    //   </script>
-    // `);
+        //   res.send(`
+        //
+        //   <h2>With <code>"express"</code> npm package</h2>
+        //   <form id="myForm" action="/admin/desserts" enctype="multipart/form-data" method="post">
+        //
+        //     <div>Name: <input name="name" type="text"/></div>
+        //     <div>Ingredients: <input name="ingredients" type="text" /></div>
+        //     <div>Ingredients: <input name="ingredients" type="text" /></div>
+        //     <div>Price: <input type="text" name="price" /></div>
+        //
+        //     <div>Image: <input type="file" name="dessert_image"/></div>
+        //     <div>Model: <input type="file" name="dessert_model" /></div>
+        //
+        //     <input type="submit" value="Upload"/>
+        //   </form>
+        //
+        //   <script>
+        //       let myForm = document.getElementById("myForm");
+        //       myForm.onsubmit = async (e) => {
+        //           e.preventDefault()
+        //
+        //           let myFormData = new FormData(myForm);
+        //
+        //           // console.log(myFormData.getAll("ingredients"));
+        //           myFormData.set('ingredients', myFormData.getAll("ingredients"));
+        //
+        //           let response = await fetch('/admin/desserts', {
+        //               method: 'POST',
+        //               body: myFormData
+        //           });
+        //
+        //           // console.log(new FormData(myForm));
+        //           //
+        //           let result = await response.json();
+        //
+        //           console.log(result);
+        //
+        //       }
+        //
+        //
+        //   </script>
+        // `);
 
-    //   res.send(`
-    //
-    //   <h2>With <code>"express"</code> npm package</h2>
-    //   <form id="myForm" action="/admin/desserts" enctype="multipart/form-data">
-    //
-    //     <div>Name: <input name="name" type="text"/></div>
-    //     <div>Ingredients: <input name="ingredients" type="text" /></div>
-    //     <div>Ingredients: <input name="ingredients" type="text" /></div>
-    //     <div>Price: <input type="text" name="price" /></div>
-    //
-    //     <div>Image: <input type="file" name="dessert_image"/></div>
-    //     <div>Model: <input type="file" name="dessert_model" /></div>
-    //
-    //     <input type="submit" value="Upload"/>
-    //   </form>
-    //
-    //   <script>
-    //       let myForm = document.getElementById("myForm");
-    //       myForm.onsubmit = async (e) => {
-    //           e.preventDefault()
-    //
-    //           let myFormData = new FormData(myForm);
-    //
-    //           // console.log(myFormData.getAll("ingredients"));
-    //           myFormData.set('ingredients', myFormData.getAll("ingredients"));
-    //
-    //           let response = await fetch('/admin/desserts/5fe49b9ed5a4f93b34fa718a', {
-    //               method: 'PATCH',
-    //               body: myFormData
-    //           });
-    //
-    //           // console.log(new FormData(myForm));
-    //           //
-    //           let result = await response.json();
-    //
-    //           console.log(result);
-    //
-    //       }
-    //
-    //
-    //   </script>
-    // `);
+        //   res.send(`
+        //
+        //   <h2>With <code>"express"</code> npm package</h2>
+        //   <form id="myForm" action="/admin/desserts" enctype="multipart/form-data">
+        //
+        //     <div>Name: <input name="name" type="text"/></div>
+        //     <div>Ingredients: <input name="ingredients" type="text" /></div>
+        //     <div>Ingredients: <input name="ingredients" type="text" /></div>
+        //     <div>Price: <input type="text" name="price" /></div>
+        //
+        //     <div>Image: <input type="file" name="dessert_image"/></div>
+        //     <div>Model: <input type="file" name="dessert_model" /></div>
+        //
+        //     <input type="submit" value="Upload"/>
+        //   </form>
+        //
+        //   <script>
+        //       let myForm = document.getElementById("myForm");
+        //       myForm.onsubmit = async (e) => {
+        //           e.preventDefault()
+        //
+        //           let myFormData = new FormData(myForm);
+        //
+        //           // console.log(myFormData.getAll("ingredients"));
+        //           myFormData.set('ingredients', myFormData.getAll("ingredients"));
+        //
+        //           let response = await fetch('/admin/desserts/5fe49b9ed5a4f93b34fa718a', {
+        //               method: 'PATCH',
+        //               body: myFormData
+        //           });
+        //
+        //           // console.log(new FormData(myForm));
+        //           //
+        //           let result = await response.json();
+        //
+        //           console.log(result);
+        //
+        //       }
+        //
+        //
+        //   </script>
+        // `);
 
 
-    // console.log(req.protocol + '://' + req.get('host') + req.originalUrl)
-    res.json({title: "desserts", desserts});
+        // console.log(req.protocol + '://' + req.get('host') + req.originalUrl)
+        res.json({title: "desserts", desserts});
     } catch (err) {
         res.status(500).json({message: ["internal server error"]})
     }
