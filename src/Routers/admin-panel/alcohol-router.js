@@ -108,6 +108,7 @@ router.patch("/:id", async (req, res, next) => {
         }
 
     } catch (err) {
+        console.log(err)
         res.status(500).json({message: ["internal server error"]})
     }
 
@@ -117,6 +118,8 @@ router.delete("/:id", async (req, res, next) => {
     try {
         const alcoholToDelete = await AlcoholModel.findById(req.params.id)
         if (alcoholToDelete) {
+
+            await alcoholToDelete.deleteOne()
             res.status(200).json({message: "alcohol was deleted", alcoholToDelete})
         } else {
             res.status(400).json({message: ["there is no such alcohol"]});

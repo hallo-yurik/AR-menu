@@ -282,6 +282,9 @@ router.patch("/:id", async (req, res, next) => {
                     changeableDessert.ingredients = clearIngredients
                     changeableDessert.price = newFormData.fields.price
 
+                    // await fs.unlink(path.join(__dirname, `../../DessertsImages/${changeableDessert._id}.png`), err => console.log(err))
+                    // await fs.unlink(path.join(__dirname, `../../3D-Models/${changeableDessert._id}.usdz`), err => console.log(err))
+
                     await fs.rename(newFormData.files.dessert_model.path, path.join(__dirname, `../../3D-Models/${changeableDessert._id}.usdz`), err => {
                         if (err) throw err
                     })

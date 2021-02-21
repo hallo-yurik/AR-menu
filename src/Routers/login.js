@@ -26,7 +26,7 @@ router.post("/signup", async (req, res, next) => {
         const objUser = newUserDocument.toObject()
         delete objUser.password;
 
-        return res.status(204).json({message: ["You are signed up successfully, please wait for verifying"]})
+        return res.status(200).json({message: ["You are signed up successfully, please wait for verifying"]})
 
     } catch (err) {
         res.status(500).json({message: ["internal server error"]});

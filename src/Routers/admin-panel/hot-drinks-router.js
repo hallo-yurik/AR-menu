@@ -117,11 +117,11 @@ router.delete("/:id", async (req, res, next) => {
             await hotDrinkToDelete.deleteOne();
             res.status(200).json({message: `${hotDrinkToDelete.name} was deleted`, hotDrinkToDelete})
         } else {
-            res.status(400).json({message: "there is no such hot drink"});
+            res.status(400).json({message: ["there is no such hot drink"]});
         }
     } catch (err) {
         console.log(err)
-        res.status(500).json({message: 500})
+        res.status(500).json({message: ["internal server error"]})
     }
 });
 

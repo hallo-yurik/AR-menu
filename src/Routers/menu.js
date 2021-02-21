@@ -5,9 +5,9 @@ const Menu = require("../models/MenuModel")
 router.get("/", async (req, res, next) => {
     try{
         const currentMenu = await Menu.findOne({current: true})
-        res.json(currentMenu)
+        res.status(200).json(currentMenu)
     } catch (err) {
-        res.json({message: "Internal server error"})
+        res.status(500).json({message: ["Internal server error"]})
     }
 });
 
